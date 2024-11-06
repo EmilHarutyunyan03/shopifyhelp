@@ -62,7 +62,10 @@ const uploadFile = async (req, res) => {
     );
 
     const fileId = createFileResponse.data.data?.fileCreate?.files?.[0]?.id;
+    
     if (!fileId) throw new Error("File creation failed on Shopify.");
+    // Time upload file
+    await new Promise(resolve => setTimeout(resolve, 1500));
 
     const getFileUrlQuery = `query {
       node(id: "${fileId}") {
@@ -91,7 +94,6 @@ const uploadFile = async (req, res) => {
     );
 
     let fileUrl = ''
-
     if (type === "image") {
       fileUrl = getFileUrlResponse.data.data?.node?.image?.url;
     } else if (type === "video") {
@@ -99,13 +101,13 @@ const uploadFile = async (req, res) => {
     } else {
       fileUrl = getFileUrlResponse.data.data?.node?.url;
     }
+    console.log('fileUrl :', fileUrl);
     if (!fileUrl) throw new Error("Failed to retrieve file URL.");
     
     
-    console.log('fileUrl :', fileUrl);
     res.status(200).json({ link: fileUrl });
   } catch (error) {
-    console.error("File upload error:", error.message);
+    console.error("File upload error:", error);
     res.status(500).json({ error: true, message: error.message || "Server Error" });
   }
 };
