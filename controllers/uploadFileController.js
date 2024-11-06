@@ -44,6 +44,7 @@ const uploadFile = async (req, res) => {
     form.append("file", file.buffer, { filename: fileName, contentType: file.mimetype });
 
     const headers = { ...form.getHeaders(), ...(targetUrl.includes("amazon") ? { "Content-Length": fileSize + 5000 } : {}) };
+    
     await axios.post(targetUrl, form, { headers });
 
     const createFileVariables = {
@@ -99,7 +100,9 @@ const uploadFile = async (req, res) => {
       fileUrl = getFileUrlResponse.data.data?.node?.url;
     }
     if (!fileUrl) throw new Error("Failed to retrieve file URL.");
-
+    
+    
+    console.log('fileUrl :', fileUrl);
     res.status(200).json({ link: fileUrl });
   } catch (error) {
     console.error("File upload error:", error.message);
